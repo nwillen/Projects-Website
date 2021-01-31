@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="heapSort.css">
+</head>
+
+<body>
+
+
+    <p id="title"> Heap Sort</p>
+
+    <canvas id="canv" style='border:1px solid #000000;'></canvas>
+
+    <br>
+    <button id="randomize"> Randomize </button>
+    <br>
+    <button id="sort"> Heap Sort</button>
+
+    <script>
+        let array_length
+        let top_offset = 150
+
+        let canvas = document.getElementById('canv')
+        var ctx = canvas.getContext('2d')
+
+
+        canvas.width = 1000
+        canvas.height = 750
+
+        let steps = []
+
+        function heapify(array, index) {
+            var left = 2 * index + 1;
+            var right = 2 * index + 2;
+            var max = index;
+
+            if (left < array_length && array[left] > array[max]) {
+                max = left;
+            }
+
+            if (right < array_length && array[right] > array[max]) {
+                max = right;
+            }
+
+            if (max != index) {
+                swap(array, index, max);
+                heapify(array, max);
+            }
+        }
+
+        function swap(array, index1, index2) {
+            let tmp = array[index1]
+            array[index1] = array[index2]
+            array[index2] = tmp
+            steps.push({ i1: index1, i2: index2, curr_arr: [...array] })
+        }
+
+        function heapsort(array) {
+            array_length = array.length
+
+            for (let i = Math.floor(array_length / 2); i >= 0; i--) {
+                heapify(array, i)
+            }
+
+            for (let i = array.length - 1; i > 0; i--) {
+                swap(array, 0, i)
+                array_length--
+                heapify(array, 0)
+            }
+        }
+
+        function getXY(index) {
+            switch (index) {
+                case 0:
+                    return { x: 500, y: 50 }
+                case 1:
+                    return { x: 250, y: 212.5 }
+                case 2:
+                    return { x: 750, y: 212.5 }
+                case 3:
+                    return { x: 125, y: 400 }
+                case 4:
+                    return { x: 375, y: 400 }
+                case 5:
+                    return { x: 625, y: 400 }
+                case 6:
+                    return { x: 875, y: 400 }
+                case 7:
+                    return { x: 62.5, y: 587.5 }
+                case 8:
+                    return { x: 187.5, y: 587.5 }
+                case 9:
+                    return { x: 312.5, y: 587.5 }
+                case 10:
+                    return { x: 437.5, y: 587.5 }
+                case 11:
+                    return { x: 562.5, y: 587.5 }
+                case 12:
+                    return { x: 687.5, y: 587.5 }
+                case 13:
+                    return { x: 812.5, y: 587.5 }
+                case 14:
+                    return { x: 937.5, y: 587.5 }
+            }
+        }
+
+        function drawCircle(x, y, text) {
+            ctx.beginPath();
+            ctx.arc(x, y, 20, 0, 2 * Math.PI);
+            ctx.fillStyle = '#8bc99c'
+            ctx.fill();
+            ctx.lineWidth = 4;
+            ctx.strokeStyle = "black";
+            ctx.stroke();
+            ctx.fillStyle = "black";
+            ctx.textAlign = "center";
+            ctx.font = "15px Courier New"
+            ctx.fillText(text, x, y)
+        }
+
+        function drawOutline(x, y, color) {
+            ctx.beginPath()
+            ctx.strokeStyle = color
+            ctx.lineWidth = 4;
+            ctx.arc(x, y, 20, 0, 2 * Math.PI)
+            ctx.stroke()
+        }
+
+        function loadDisplay(arr) {
+            for (let i = 0; i < arr.length; i++) {
+                let xy = getXY(i)
+                drawCircle(xy.x, xy.y, arr[i])
+            }
+        }
+
+        let _arr = []
+        document.getElementById('randomize').addEventListener('click', function () {
+            steps = []
+            for (let i = 0; i < 16; i++) {
+                _arr.push(Math.floor(Math.random()*100))
+            }
+            console.log(_arr)
+            loadDisplay(_arr)
+        })
+
+        document.getElementById('sort').addEventListener('click', function () {
+            heapsort(_arr)
+            for (let i = 0; i < steps.length; i++) {
+                let xy1 = getXY(steps[i].i1)
+                let xy2 = getXY(steps[i].i2)
+                //Add circles
+                setTimeout(function () {
+                    drawOutline(xy1.x, xy1.y, 'red')
+                    drawOutline(xy2.x, xy2.y, 'red')
+                }, i * 2 * 1000)
+
+                //Remove Circles
+                setTimeout(function () {
+                    drawOutline(xy1.x, xy1.y, 'black')
+                    drawOutline(xy2.x, xy2.y, 'black')
+                    drawCircle(xy1.x, xy1.y, steps[i].curr_arr[steps[i].i1])
+                    drawCircle(xy2.x, xy2.y, steps[i].curr_arr[steps[i].i2])
+                }, (i * 2 + 1) * 1000)
+            }
+        })
+
+
+    </script>
+</body>
+
+</html>
